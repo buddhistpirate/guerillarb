@@ -11,7 +11,8 @@ module Guerillarb
 		describe :handle_connection do
 			it "can handle a connection" do
 				socket = double(TCPSocket)
-				socket.should_receive(:readline).and_return("2\n")
+				socket.should_receive(:readline).twice.and_return("2\n","exit\n")
+				socket.should_receive(:closed?).and_return(true)
 				
 				socket.should_receive(:puts) do |arg|
 					documents = MultiJson.load(arg)
@@ -24,7 +25,6 @@ module Guerillarb
 
 		describe :listen do
 			it "can accept requests through tcp" do
-				
 				hostname = "localhost"
 				port = 8080
 				thread = Thread.new do
@@ -38,14 +38,16 @@ module Guerillarb
 					connection = TCPSocket.new(hostname,port)
 				rescue Errno::ECONNREFUSED => e 
 					number_of_tries += 1
-					puts "\nTrying to connect to server #{number_of_tries} tries already"
 					sleep 1 
 					retry
 				end
 
 				connection.puts 2
 				json = connection.readline
+				connection.puts "exit"
+				connection.close
 				thread.exit
+				thread.join
 				documents = MultiJson.load(json)
 				documents.size.should == 2
 			end
