@@ -1,5 +1,5 @@
 # Guerillarb
-
+[![Build Status](https://travis-ci.org/buddhistpirate/guerillarb.png?branch=master)](https://travis-ci.org/buddhistpirate/guerillarb)
 Guerillarb is a TCP service for serving random document bodies. You supply it an integer followed by a newline and it will serve you a JSON array of that many lines indexed randomly from a random source document. It will then select contiguous lines. If the document does not have enough lines it will chose another file to serve the remaining lines.
 
 ## Installation
