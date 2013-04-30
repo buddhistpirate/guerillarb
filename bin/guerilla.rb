@@ -11,9 +11,13 @@ options = Slop.parse do
 	on 'p', 'port', "port to listen on. Default: #{Guerillarb::Guerilla::DEFAULT_PORT}", argument: true
 end
 
-options[:port] = options[:port].to_i if options.port?
+port = options[:port].to_i if options.port?
+hostname = options[:hostname] if options.hostname?
+directory = options[:directory] if options.directory?
 
-guerilla = Guerillarb::Guerilla.new options
+guerilla = Guerillarb::Guerilla.new( directory: directory,
+				    hostname: hostname,
+				    port: port )
 guerilla.register_traps
 guerilla.load_library
 guerilla.listen

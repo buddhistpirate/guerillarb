@@ -2,6 +2,12 @@
 
 require 'socket'
 
+if ARGV.size < 3
+	puts "usage: #{$PROGRAM_NAME} port loops lines"
+	exit(1)
+end
+
+
 port = ARGV[0].to_i
 loops = ARGV[1].to_i
 lines = ARGV[2].to_i

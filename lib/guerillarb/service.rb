@@ -30,20 +30,20 @@ module Guerillarb
 
 		def self.listen(library, hostname, port)
 			server = TCPServer.new(hostname,port)
-			pids = []
+			child_monitor_threads = []
 			loop do
 				connection = server.accept
 				puts "Connection accepted at #{connection}"
-				pids << fork do
+				pid = fork do
 					handle_connection(library,connection)
+					Kernel.exit!
 				end
+				child_monitor_threads << Process.detach(pid)
 			end
 		ensure 
 			puts "Waiting on all forked children"
-			pids.each do |pid|
-				puts "Waiting on #{pid}"
-				Process.wait pid
-				puts "Done waiting on #{pid}"
+			child_monitor_threads.each do |thread|
+				thread.join if thread
 			end
 		end
 
